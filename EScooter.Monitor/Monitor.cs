@@ -22,22 +22,28 @@ namespace EScooter.Monitor
         [Function("scooter-monitor")]
         public static async Task Run([ServiceBusTrigger("%ReportedPropertiesTopicName%", "%ReportedPropertiesSubscriptionName%", Connection = ServiceBusVariableName)] string mySbMsg, IDictionary<string, object> userProperties, FunctionContext context)
         {
+            var serializerSettings = new JsonSerializerSettings()
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
             var logger = context.GetLogger(typeof(Monitor).Name);
             logger.LogInformation($"C# ServiceBus topic trigger function processed message: {mySbMsg}");
 
             var scooterDeviceTwin = JsonConvert.DeserializeObject<Twin>(mySbMsg, new TwinJsonConverter());
             var reportedProps = scooterDeviceTwin.Properties.Reported;
+            var reportedPropsObj = JsonConvert.DeserializeObject<ReportedPropertiesDTO>(reportedProps.ToJson(), serializerSettings);
 
             var connectionString = Environment.GetEnvironmentVariable(ServiceBusVariableName);
             var serviceBusClient = new ServiceBusClient(connectionString);
             var topicDescriptor = AzureServiceBusSenderDescriptor.Topic(Environment.GetEnvironmentVariable("ScooterStatusTopicName"));
             var eventBusPublisher = new AzureServiceBusPublisher(serviceBusClient, topicDescriptor);
-            var serializer = new NewtonsoftJsonSerializer(new JsonSerializerSettings()
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            });
+            var serializer = new NewtonsoftJsonSerializer(serializerSettings);
             var externalEventsPublisher = new ExternalEventPublisher(eventBusPublisher, new MachineDateTime(), serializer);
-            var scooterStatus = new ScooterStatus();
+            var scooterStatus = new ScooterStatus(
+                Locked: reportedPropsObj.Locked,
+                UpdateFrequency: reportedPropsObj.UpdateFrequency,
+                MaxSpeed: reportedPropsObj.MaxSpeed,
+                Standby: reportedPropsObj.Standby);
             await externalEventsPublisher.Publish(scooterStatus);
             return;
         }
