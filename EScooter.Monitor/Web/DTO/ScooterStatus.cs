@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace EScooter.Monitor.Web.DTO
 {
     public record ScooterStatus(
+        string Id,
         bool Locked,
         string UpdateFrequency,
         double MaxSpeed,

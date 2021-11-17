@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
 using EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus;
@@ -12,6 +9,9 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EScooter.Monitor
 {
@@ -32,6 +32,7 @@ namespace EScooter.Monitor
             var scooterDeviceTwin = JsonConvert.DeserializeObject<Twin>(mySbMsg, new TwinJsonConverter());
             var reportedProps = scooterDeviceTwin.Properties.Reported;
             var reportedPropsObj = JsonConvert.DeserializeObject<ReportedPropertiesDTO>(reportedProps.ToJson(), serializerSettings);
+            var id = scooterDeviceTwin.DeviceId;
 
             var connectionString = Environment.GetEnvironmentVariable(ServiceBusVariableName);
             var serviceBusClient = new ServiceBusClient(connectionString);
@@ -40,6 +41,7 @@ namespace EScooter.Monitor
             var serializer = new NewtonsoftJsonSerializer(serializerSettings);
             var externalEventsPublisher = new ExternalEventPublisher(eventBusPublisher, new MachineDateTime(), serializer);
             var scooterStatus = new ScooterStatus(
+                Id: id,
                 Locked: reportedPropsObj.Locked,
                 UpdateFrequency: reportedPropsObj.UpdateFrequency,
                 MaxSpeed: reportedPropsObj.MaxSpeed,
