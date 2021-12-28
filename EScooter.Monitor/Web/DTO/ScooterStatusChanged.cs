@@ -9,8 +9,8 @@ namespace EScooter.Monitor.Web.DTO
 {
     public record ScooterStatusChanged(
         string Id,
-        bool Locked,
+        bool? Locked,
         string UpdateFrequency,
-        double MaxSpeed,
-        bool Standby) : ExternalEvent;
+        double? MaxSpeed,
+        bool? Standby) : ExternalEvent;
 }
