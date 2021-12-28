@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace EScooter.Monitor
@@ -29,13 +28,12 @@ namespace EScooter.Monitor
             };
             var logger = context.GetLogger(typeof(Monitor).Name);
             logger.LogInformation($"C# ServiceBus topic trigger function processed message: {mySbMsg}");
-            userProperties.TryGetValue("deviceId", out object value);
-            string scooterId = ((JsonElement)value).GetString();
+            userProperties.TryGetValue("deviceId", out object scooterId);
 
             var scooterDeviceTwin = JsonConvert.DeserializeObject<Twin>(mySbMsg, new TwinJsonConverter());
             var reportedProps = scooterDeviceTwin.Properties.Reported;
             var reportedPropsObj = JsonConvert.DeserializeObject<ReportedPropertiesDTO>(reportedProps.ToJson(), serializerSettings);
-            var id = scooterId;
+            var id = scooterId.ToString();
 
             var connectionString = Environment.GetEnvironmentVariable(ServiceBusVariableName);
             var serviceBusClient = new ServiceBusClient(connectionString);
