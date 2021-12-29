@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace EScooter.Monitor.Web.DTO
 {
     public record ReportedPropertiesDTO(
-        bool Locked,
+        bool? Locked,
         string UpdateFrequency,
-        double MaxSpeed,
-        bool Standby);
+        double? MaxSpeed,
+        bool? Standby);
 }
