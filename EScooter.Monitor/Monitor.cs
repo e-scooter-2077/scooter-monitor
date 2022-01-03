@@ -33,6 +33,10 @@ namespace EScooter.Monitor
             var scooterDeviceTwin = JsonConvert.DeserializeObject<Twin>(mySbMsg, new TwinJsonConverter());
             var reportedProps = scooterDeviceTwin.Properties.Reported;
             var reportedPropsObj = JsonConvert.DeserializeObject<ReportedPropertiesDTO>(reportedProps.ToJson(), serializerSettings);
+            if (reportedPropsObj is { Locked: null, MaxSpeed: null, Standby: null, UpdateFrequency: null })
+            {
+                return;
+            }
             var id = scooterId.ToString();
 
             var connectionString = Environment.GetEnvironmentVariable(ServiceBusVariableName);
