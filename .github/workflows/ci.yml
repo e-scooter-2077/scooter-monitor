@@ -5,6 +5,7 @@ env:
   RELEASE_PREFIX: Azure Function Template
   AZURE_FUNCTIONAPP_NAME: 'scooter-monitor'
   PROJECT_NAME: 'EScooter.Monitor'
+
 on:
   workflow_dispatch:
   push:
