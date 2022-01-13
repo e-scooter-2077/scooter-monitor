@@ -45,7 +45,7 @@ namespace EScooter.Monitor
             var eventBusPublisher = new AzureServiceBusPublisher(serviceBusClient, topicDescriptor);
             var serializer = new NewtonsoftJsonSerializer(serializerSettings);
             var externalEventsPublisher = new ExternalEventPublisher(eventBusPublisher, new MachineDateTime(), serializer);
-            var scooterStatus = new ScooterStatusChanged(
+            var scooterStatus = new ScooterStatusChangedDTO(
                 Id: id,
                 Locked: reportedPropsObj.Locked,
                 UpdateFrequency: reportedPropsObj.UpdateFrequency,
