@@ -67,8 +67,7 @@ namespace EScooter.Monitor.UnitTests
                     Locked: _locked,
                     UpdateFrequency: _updateFrequency,
                     Standby: _standby,
-                    MaxSpeed: _maxSpeed
-                    ));
+                    MaxSpeed: _maxSpeed));
         }
     }
 }
