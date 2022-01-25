@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EScooter.Monitor.Web.DTO
 {
-    public record ScooterStatusChangedDTO(
+    public record ScooterStatusChanged(
         string Id,
         bool? Locked,
         string UpdateFrequency,

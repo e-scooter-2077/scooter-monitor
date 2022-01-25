@@ -4,11 +4,6 @@ using Microsoft.Azure.Devices.Shared;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace EScooter.Monitor.UnitTests
@@ -28,10 +23,10 @@ namespace EScooter.Monitor.UnitTests
             return t;
         }
 
-        private bool _locked = true;
-        private double _maxSpeed = 10;
-        private bool _standby = false;
-        private string _updateFrequency = "00:00:30";
+        private readonly bool _locked = true;
+        private readonly double _maxSpeed = 10;
+        private readonly bool _standby = false;
+        private readonly string _updateFrequency = "00:00:30";
 
         private Twin CompleteTwin()
         {
@@ -44,7 +39,7 @@ namespace EScooter.Monitor.UnitTests
             return t;
         }
 
-        private JsonSerializerSettings _serializerSettings = new JsonSerializerSettings()
+        private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings()
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
@@ -62,7 +57,7 @@ namespace EScooter.Monitor.UnitTests
         {
             var twin = CompleteTwin();
             Monitor.CreateStatusEventFromTriggerMessage(twin.DeviceId, JsonConvert.SerializeObject(twin, new TwinJsonConverter()), _serializerSettings)
-                .ShouldBe(new ScooterStatusChangedDTO(
+                .ShouldBe(new ScooterStatusChanged(
                     Id: twin.DeviceId,
                     Locked: _locked,
                     UpdateFrequency: _updateFrequency,

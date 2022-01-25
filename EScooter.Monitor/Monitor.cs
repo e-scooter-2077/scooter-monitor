@@ -45,16 +45,16 @@ namespace EScooter.Monitor
             return;
         }
 
-        public static Option<ScooterStatusChangedDTO> CreateStatusEventFromTriggerMessage(string id, string msg, JsonSerializerSettings serializerSettings)
+        public static Option<ScooterStatusChanged> CreateStatusEventFromTriggerMessage(string id, string msg, JsonSerializerSettings serializerSettings)
         {
             var scooterDeviceTwin = JsonConvert.DeserializeObject<Twin>(msg, new TwinJsonConverter());
             var reportedProps = scooterDeviceTwin.Properties.Reported;
-            var reportedPropsObj = JsonConvert.DeserializeObject<ReportedPropertiesDTO>(reportedProps.ToJson(), serializerSettings);
+            var reportedPropsObj = JsonConvert.DeserializeObject<ReportedProperties>(reportedProps.ToJson(), serializerSettings);
             if (reportedPropsObj is { Locked: null, MaxSpeed: null, Standby: null, UpdateFrequency: null })
             {
                 return None;
             }
-            var scooterStatus = new ScooterStatusChangedDTO(
+            var scooterStatus = new ScooterStatusChanged(
                 Id: id,
                 Locked: reportedPropsObj.Locked,
                 UpdateFrequency: reportedPropsObj.UpdateFrequency,

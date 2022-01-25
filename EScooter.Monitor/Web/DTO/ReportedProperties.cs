@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EScooter.Monitor.Web.DTO
 {
-    public record ReportedPropertiesDTO(
+    public record ReportedProperties(
         bool? Locked,
         string UpdateFrequency,
         double? MaxSpeed,
