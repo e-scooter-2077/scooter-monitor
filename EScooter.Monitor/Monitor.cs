@@ -34,14 +34,16 @@ namespace EScooter.Monitor
             var id = scooterId.ToString();
             var res = CreateStatusEventFromTriggerMessage(id, mySbMsg, serializerSettings);
 
-            var connectionString = Environment.GetEnvironmentVariable(ServiceBusVariableName);
-            var serviceBusClient = new ServiceBusClient(connectionString);
-            var topicDescriptor = AzureServiceBusSenderDescriptor.Topic(Environment.GetEnvironmentVariable("ScooterStatusTopicName"));
-            var eventBusPublisher = new AzureServiceBusPublisher(serviceBusClient, topicDescriptor);
-            var serializer = new NewtonsoftJsonSerializer(serializerSettings);
-            var externalEventsPublisher = new ExternalEventPublisher(eventBusPublisher, new MachineDateTime(), serializer);
-
-            await res.IfPresentAsync(async x => await externalEventsPublisher.Publish(x));
+            await res.IfPresentAsync(async x =>
+            {
+                var connectionString = Environment.GetEnvironmentVariable(ServiceBusVariableName);
+                var serviceBusClient = new ServiceBusClient(connectionString);
+                var topicDescriptor = AzureServiceBusSenderDescriptor.Topic(Environment.GetEnvironmentVariable("ScooterStatusTopicName"));
+                var eventBusPublisher = new AzureServiceBusPublisher(serviceBusClient, topicDescriptor);
+                var serializer = new NewtonsoftJsonSerializer(serializerSettings);
+                var externalEventsPublisher = new ExternalEventPublisher(eventBusPublisher, new MachineDateTime(), serializer);
+                await externalEventsPublisher.Publish(x);
+            });
             return;
         }
 
